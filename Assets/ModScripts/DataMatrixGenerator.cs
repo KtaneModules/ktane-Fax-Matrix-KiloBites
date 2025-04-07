@@ -27,8 +27,6 @@ public class DataMatrixGenerator
 
         var converted = Sprite.Create(encoded, new Rect(0, 0, 256, 256), new Vector2(0.5f, 0.5f));
 
-        converted.texture.filterMode = FilterMode.Point;
-
         return converted;
     }
 }

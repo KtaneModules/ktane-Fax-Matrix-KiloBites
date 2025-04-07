@@ -38,7 +38,11 @@ public class FaxMatrixScript : MonoBehaviour {
 	
 	void Start()
     {
-		dataMatrix = new DataMatrixGenerator().GenerateDataMatrix("7746837");
+		var randomNumbers = Enumerable.Range(0, 7).Select(_ => Range(0, 10)).Join("");
+
+		Log(randomNumbers);
+
+		dataMatrix = new DataMatrixGenerator().GenerateDataMatrix(randomNumbers);
 		render.sprite = dataMatrix;
     }
 	
