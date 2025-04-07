@@ -7,15 +7,19 @@ using KModkit;
 using static UnityEngine.Random;
 using static UnityEngine.Debug;
 
-public class TemplateScript : MonoBehaviour {
+public class FaxMatrixScript : MonoBehaviour {
 
 	public KMBombInfo Bomb;
 	public KMAudio Audio;
 	public KMBombModule Module;
 
+	public SpriteRenderer render;
+
 	static int moduleIdCounter = 1;
 	int moduleId;
 	private bool moduleSolved;
+
+	private Sprite dataMatrix;
 
 	void Awake()
     {
@@ -34,7 +38,8 @@ public class TemplateScript : MonoBehaviour {
 	
 	void Start()
     {
-
+		dataMatrix = new DataMatrixGenerator().GenerateDataMatrix("7746837");
+		render.sprite = dataMatrix;
     }
 	
 	

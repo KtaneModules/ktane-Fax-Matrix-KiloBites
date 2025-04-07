@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 114655116690600614}
   - component: {fileID: 114911604824860726}
   m_Layer: 0
-  m_Name: Template
+  m_Name: Fax Matrix
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
