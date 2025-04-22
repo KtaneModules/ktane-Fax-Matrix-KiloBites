@@ -21,6 +21,10 @@ public class FaxMatrixScript : MonoBehaviour {
 
 	private Sprite dataMatrix;
 
+	private NonogramPuzzle puzzle;
+
+	private List<string> horizClues, vertClues;
+
 	void Awake()
     {
 
@@ -38,12 +42,14 @@ public class FaxMatrixScript : MonoBehaviour {
 	
 	void Start()
     {
-		var randomNumbers = Enumerable.Range(0, 7).Select(_ => Range(0, 10)).Join("");
+		puzzle = new NonogramPuzzle();
 
-		Log(randomNumbers);
+		puzzle.Generate(out horizClues, out vertClues);
 
-		dataMatrix = new DataMatrixGenerator().GenerateDataMatrix(randomNumbers);
-		render.sprite = dataMatrix;
+		render.sprite = puzzle.DataMatrix;
+
+		Log($"Horizontal Clues: {horizClues.Join(", ")}");
+		Log($"Vertical Clues: {vertClues.Join(", ")}");
     }
 	
 	
