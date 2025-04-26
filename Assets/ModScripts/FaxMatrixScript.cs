@@ -42,7 +42,7 @@ public class FaxMatrixScript : MonoBehaviour {
 	
 	void Start()
     {
-		puzzle = new NonogramPuzzle();
+		puzzle = new NonogramPuzzle(Bomb.GetSerialNumberNumbers().Last());
 
 		puzzle.Generate(out horizClues, out vertClues);
 
