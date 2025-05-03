@@ -13,6 +13,8 @@ public class FaxMatrixScript : MonoBehaviour {
 	public KMAudio Audio;
 	public KMBombModule Module;
 
+	public TextMesh[] rowTexts, colTexts;
+
 	public SpriteRenderer render;
 
 	static int moduleIdCounter = 1;
@@ -24,6 +26,7 @@ public class FaxMatrixScript : MonoBehaviour {
 	private NonogramPuzzle puzzle;
 
 	private List<string> horizClues, vertClues;
+	private List<List<string>> encodingLogs;
 
 	void Awake()
     {
@@ -42,15 +45,29 @@ public class FaxMatrixScript : MonoBehaviour {
 	
 	void Start()
     {
-		puzzle = new NonogramPuzzle(Bomb.GetSerialNumberNumbers().Last());
+		puzzle = new NonogramPuzzle(Bomb.GetSerialNumber());
 
-		puzzle.Generate(out horizClues, out vertClues);
+		puzzle.Generate(out horizClues, out vertClues, out encodingLogs);
 
 		render.sprite = puzzle.DataMatrix;
 
-		Log($"Horizontal Clues: {horizClues.Join(", ")}");
-		Log($"Vertical Clues: {vertClues.Join(", ")}");
+		foreach (var encoding in encodingLogs)
+			foreach (var log in encoding)
+				Log($"[Fax Matrix #{moduleId}] {log}");
+
+		Log($"[Fax Matrix #{moduleId}] Horizontal Clues: {horizClues.Join(", ")}");
+		Log($"[Fax Matrix] #{moduleId} Vertical Clues: {vertClues.Join(", ")}");
+		SetHints();
     }
+
+	void SetHints()
+	{
+		for (int i = 0; i < 10; i++)
+		{
+			rowTexts[i].text = horizClues[i];
+			colTexts[i].text = vertClues[i].Replace(' ', '\n');
+		}
+	}
 	
 	
 	void Update()

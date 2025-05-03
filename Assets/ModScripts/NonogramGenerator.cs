@@ -41,6 +41,9 @@ public class NonogramGenerator
                 }
             }
 
+            if (count == 0 && hintsHoriz[i].Count == 0)
+                hintsHoriz[i].Add(0);
+
             if (count > 0)
                 hintsHoriz[i].Add(count);
         }
@@ -61,6 +64,9 @@ public class NonogramGenerator
                     count = 0;
                 }
             }
+
+            if (count == 0 && hintsVert[i].Count == 0)
+                hintsVert[i].Add(0);
 
             if (count > 0)
                 hintsVert[i].Add(count);
