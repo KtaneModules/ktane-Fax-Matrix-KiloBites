@@ -12,6 +12,8 @@ public class NonogramPuzzle
 
     string _serialNumber;
 
+    public int[] GeneratedNumbers;
+
     public NonogramPuzzle(string serialNumber)
     {
         _serialNumber = serialNumber;
@@ -31,7 +33,7 @@ public class NonogramPuzzle
         return (useForPuzzle ? Enumerable.Range(0, 144).Where(x => !exclude.Contains(x)) : Enumerable.Range(0, 144)).Select(x => colors[(11 - (x / 12)) * 12 + (x % 12)]).ToArray();
     }
 
-    public void Generate(out List<string> horizClues, out List<string> vertClues, out List<List<string>> logs)
+    public void Generate(out List<string> horizClues, out List<string> vertClues, out List<List<string>> logs, out bool[] valid)
     {
         var q = new Queue<int[]>(Enumerable.Range(0, 20).Select(x => Enumerable.Range(0, 7).Select(_ => Range(0, 10)).ToArray()));
 
@@ -43,13 +45,16 @@ public class NonogramPuzzle
             Debug.Log(nums.Join(""));
             DataMatrix = DataMatrixGenerator.GenerateDataMatrix(nums.Join(""));
             var encoder = new DataMatrixEncoder(GetPuzzleClusters(), GetFullClusters());
-            _generator = new NonogramGenerator(encoder.EncodeDataMatrix(_serialNumber));
+            var encoded = encoder.EncodeDataMatrix(_serialNumber);
+            _generator = new NonogramGenerator(encoded);
 
             if (_generator.IsUnique())
             {
                 horizClues = _generator.PrintedHorizClues;
                 vertClues = _generator.PrintedVertClues;
                 logs = encoder.Logs;
+                valid = encoded;
+                GeneratedNumbers = nums;
                 return;
             }
         }
