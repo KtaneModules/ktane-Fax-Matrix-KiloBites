@@ -149,6 +149,91 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 674379204}
   m_Script: {fileID: 1702003387, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+--- !u!1 &88597663
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 88597664}
+  - component: {fileID: 88597666}
+  - component: {fileID: 88597665}
+  m_Layer: 0
+  m_Name: Main
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &88597664
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 88597663}
+  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 0.00000027452, y: 0.00027, z: -0.00000049441}
+  m_LocalScale: {x: 0.014751088, y: 0.014751088, z: 0.014751088}
+  m_Children: []
+  m_Father: {fileID: 674379206}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 90, y: -90, z: 0}
+--- !u!102 &88597665
+TextMesh:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 88597663}
+  m_Text: 
+  m_OffsetZ: 0
+  m_CharacterSize: 1
+  m_LineSpacing: 1
+  m_Anchor: 4
+  m_Alignment: 1
+  m_TabSize: 4
+  m_FontSize: 300
+  m_FontStyle: 0
+  m_RichText: 1
+  m_Font: {fileID: 12800000, guid: 98989a234384b5b4fa2bfea52b133802, type: 3}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+--- !u!23 &88597666
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 88597663}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 93f946a58f032b44393475c51c494f38, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!114 &96324239 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114879572910930194, guid: d17dbae31d265bb48be96785547d7c84,
@@ -1365,12 +1450,46 @@ Prefab:
       propertyPath: toggleables.Array.data[2]
       value: 
       objectReference: {fileID: 2100000, guid: 9623752fa984a164c9e71d45c0843806, type: 2}
+    - target: {fileID: 1331776946035120, guid: d17dbae31d265bb48be96785547d7c84, type: 2}
+      propertyPath: m_Name
+      value: X/Clear
+      objectReference: {fileID: 0}
+    - target: {fileID: 114142323484881982, guid: d17dbae31d265bb48be96785547d7c84,
+        type: 2}
+      propertyPath: mainBackground
+      value: 
+      objectReference: {fileID: 674379208}
+    - target: {fileID: 114142323484881982, guid: d17dbae31d265bb48be96785547d7c84,
+        type: 2}
+      propertyPath: secondButtonRender
+      value: 
+      objectReference: {fileID: 674379207}
+    - target: {fileID: 114142323484881982, guid: d17dbae31d265bb48be96785547d7c84,
+        type: 2}
+      propertyPath: mainDisplayText
+      value: 
+      objectReference: {fileID: 88597665}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d17dbae31d265bb48be96785547d7c84, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &674379205 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4732183619132176, guid: d17dbae31d265bb48be96785547d7c84,
+    type: 2}
+  m_PrefabInternal: {fileID: 674379204}
+--- !u!4 &674379206 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4908960935318582, guid: d17dbae31d265bb48be96785547d7c84,
+    type: 2}
+  m_PrefabInternal: {fileID: 674379204}
+--- !u!23 &674379207 stripped
+MeshRenderer:
+  m_PrefabParentObject: {fileID: 23638300534147022, guid: d17dbae31d265bb48be96785547d7c84,
+    type: 2}
+  m_PrefabInternal: {fileID: 674379204}
+--- !u!23 &674379208 stripped
+MeshRenderer:
+  m_PrefabParentObject: {fileID: 23957487438157430, guid: d17dbae31d265bb48be96785547d7c84,
     type: 2}
   m_PrefabInternal: {fileID: 674379204}
 --- !u!114 &690799001 stripped
@@ -1665,7 +1784,7 @@ TextMesh:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1539706010}
-  m_Text: Clear
+  m_Text: 
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1

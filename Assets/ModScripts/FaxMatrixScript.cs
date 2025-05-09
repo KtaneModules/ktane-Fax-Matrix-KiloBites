@@ -16,10 +16,11 @@ public class FaxMatrixScript : MonoBehaviour {
 	public KMSelectable[] matrixButtons, modeButtons;
 
 	public TextMesh[] rowTexts, colTexts;
+	public TextMesh mainDisplayText;
 	public GameObject tpStuff, stage2;
 
 	public Material[] toggleables;
-	public MeshRenderer mainBackground;
+	public MeshRenderer mainBackground, secondButtonRender;
 
 	static int moduleIdCounter = 1;
 	int moduleId;
@@ -34,9 +35,6 @@ public class FaxMatrixScript : MonoBehaviour {
 	private bool[] inputtedGrid = new bool[100], marked = new bool[100], solution;
 	private bool marking = false;
 	private Coroutine holdRoutine, transition;
-	private KMAudio.KMAudioRef dialing;
-
-	private Sprite dataMatrix; // Can only be used for Souvenir, but who knows
 
 	private NonogramPuzzle puzzle;
 
@@ -92,19 +90,15 @@ public class FaxMatrixScript : MonoBehaviour {
     {
 		puzzle = new NonogramPuzzle(Bomb.GetSerialNumber());
 
-		puzzle.Generate(out horizClues, out vertClues, out encodingLogs, out solution);
+		puzzle.Generate(out horizClues, out vertClues, out solution, out encodingLogs);
 
-		dataMatrix = puzzle.DataMatrix;
-
-		foreach (var encoding in encodingLogs)
-			foreach (var log in encoding)
+		for (int i = 0; i < encodingLogs.Count; i++)
+			foreach (var log in encodingLogs[i])
 				Log($"[Fax Matrix #{moduleId}] {log}");
 
 		Log($"[Fax Matrix #{moduleId}] Horizontal Clues: {horizClues.Select(x => $"[{x}]").Join()}");
 		Log($"[Fax Matrix #{moduleId}] Vertical Clues: {vertClues.Select(x => $"[{x}]").Join()}");
     }
-
-	void OnDestroy() => dialing?.StopSound();
 
 	void Activate()
 	{
@@ -127,7 +121,7 @@ public class FaxMatrixScript : MonoBehaviour {
 		button.AddInteractionPunch(0.4f);
 		Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
 
-		if (moduleSolved || !isActivated)
+		if (moduleSolved || !isActivated || transition != null)
 			return;
 
 		if (Array.IndexOf(modeButtons, button) == 1)
@@ -136,7 +130,7 @@ public class FaxMatrixScript : MonoBehaviour {
 
 	void ModeButtonRelease(KMSelectable button)
 	{
-		if (moduleSolved || !isActivated)
+		if (moduleSolved || !isActivated || transition != null)
 			return;
 
 		switch (Array.IndexOf(modeButtons, button))
@@ -148,9 +142,12 @@ public class FaxMatrixScript : MonoBehaviour {
 					{
 						Log($"[Fax Matrix #{moduleId}] The submitted grid matches the puzzle desired. Progressing to phase 2...");
 						transition = StartCoroutine(Stage2Transition());
-						button.GetComponent<TextMesh>().text = "Reset";
+						button.GetComponentInChildren<TextMesh>().text = "Reset";
+						secondButtonRender.material = toggleables[1];
 						marking = false;
-
+						modeButtons[1].GetComponent<MeshRenderer>().material = toggleables[1];
+						modeButtons[1].GetComponentInChildren<TextMesh>().text = "Clear";
+						stage++;
 					}
 					else
 					{
@@ -165,7 +162,7 @@ public class FaxMatrixScript : MonoBehaviour {
 				}
 				break;
 			case 1:
-				if (holdRoutine == null)
+				if (holdRoutine == null && stage == 0)
 				{
 					inputtedGrid = Enumerable.Repeat(false, 100).ToArray();
 					marked = Enumerable.Repeat(false, 100).ToArray();
@@ -176,7 +173,11 @@ public class FaxMatrixScript : MonoBehaviour {
 				StopCoroutine(holdRoutine);
 
 				if (stage != 0)
-					return;
+				{
+					inputtedGrid = Enumerable.Repeat(false, 100).ToArray();
+					UpdateMatrixGrid();
+					break;
+				}
 
 				marking = !marking;
 
@@ -192,16 +193,28 @@ public class FaxMatrixScript : MonoBehaviour {
 		modeButtons[1].GetComponent<MeshRenderer>().material = toggleables[1];
 
 		var elapsed = 0f;
-		var duration = 0.25f;
+		var duration = 0.5f;
 
 		while (elapsed < duration)
 		{
 			elapsed += Time.deltaTime;
 			mainBackground.material.color = Color.Lerp(oldColor, Color.white, elapsed);
+
+			for (int i = 0; i < 10; i++)
+			{
+				rowTexts[i].color = Color.Lerp(Color.white, Color.clear, elapsed);
+				colTexts[i].color = Color.Lerp(Color.white, Color.clear, elapsed);
+			}
+
 			yield return null;
 		}
 
 		stage2.SetActive(true);
+
+		var allTexts = rowTexts.Concat(colTexts).ToList();
+
+		allTexts.ForEach(x => x.text = string.Empty);
+
 		transition = null;
 	}
 
@@ -210,7 +223,7 @@ public class FaxMatrixScript : MonoBehaviour {
 		button.AddInteractionPunch(0.4f);
 		Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, transform);
 
-		if (moduleSolved || !isActivated)
+		if (moduleSolved || !isActivated || transition != null)
 			return;
 
 		var ix = Array.IndexOf(matrixButtons, button);
@@ -246,12 +259,16 @@ public class FaxMatrixScript : MonoBehaviour {
 
 	void Update()
 	{
-		if (moduleSolved || !isActivated || stage != 1 || inputtedNumbers.Count == 7)
+		if (moduleSolved || !isActivated || stage != 1 || inputtedNumbers.Count == 7 || !moduleSelected)
 			return;
 
-		if (Input.GetKeyDown(KeyCode.X))
+		if (Input.GetKeyDown(KeyCode.Backspace))
 		{
-			inputtedNumbers.Clear();
+			if (inputtedNumbers.Count > 0)
+				inputtedNumbers.RemoveAt(inputtedNumbers.Count - 1);
+
+			mainDisplayText.text = inputtedNumbers.Join("");
+
 			return;
 		}
 
@@ -260,6 +277,7 @@ public class FaxMatrixScript : MonoBehaviour {
 			{
 				Audio.PlaySoundAtTransform($"S_DTMF_0{i % 10}", transform);
 				inputtedNumbers.Add(i % 10);
+				mainDisplayText.text = inputtedNumbers.Join("");
 			}
 	}
 

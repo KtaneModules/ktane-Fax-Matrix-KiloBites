@@ -33,7 +33,7 @@ public class NonogramPuzzle
         return (useForPuzzle ? Enumerable.Range(0, 144).Where(x => !exclude.Contains(x)) : Enumerable.Range(0, 144)).Select(x => colors[(11 - (x / 12)) * 12 + (x % 12)]).ToArray();
     }
 
-    public void Generate(out List<string> horizClues, out List<string> vertClues, out List<List<string>> logs, out bool[] valid)
+    public void Generate(out List<string> horizClues, out List<string> vertClues, out bool[] valid, out List<List<string>> logged)
     {
         var q = new Queue<int[]>(Enumerable.Range(0, 20).Select(x => Enumerable.Range(0, 7).Select(_ => Range(0, 10)).ToArray()));
 
@@ -52,9 +52,9 @@ public class NonogramPuzzle
             {
                 horizClues = _generator.PrintedHorizClues;
                 vertClues = _generator.PrintedVertClues;
-                logs = encoder.Logs;
                 valid = encoded;
                 GeneratedNumbers = nums;
+                logged = encoder.Logged;
                 return;
             }
         }
