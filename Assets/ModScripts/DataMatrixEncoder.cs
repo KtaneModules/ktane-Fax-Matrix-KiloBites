@@ -191,9 +191,9 @@ public class DataMatrixEncoder
         return full;
     }
 
-    private string LogQuadrant(bool[] quadrant) => Enumerable.Range(0, 5).Select(r => Enumerable.Range(0, 5).Select(c => quadrant[5 * r + c] ? 'x' : '.').Join("")).Join("\n");
+    private string LogQuadrant(bool[] quadrant) => Enumerable.Range(0, 5).Select(r => Enumerable.Range(0, 5).Select(c => quadrant[5 * r + c] ? 'X' : '.').Join("")).Join("\n");
 
-    private string LogEntireGrid(bool[] grid) => Enumerable.Range(0, 10).Select(r => Enumerable.Range(0, 10).Select(c => grid[10 * r + c] ? 'x' : '.').Join("")).Join("\n");
+    private string LogEntireGrid(bool[] grid) => Enumerable.Range(0, 10).Select(r => Enumerable.Range(0, 10).Select(c => grid[10 * r + c] ? 'X' : '.').Join("")).Join("\n");
 
-    private string LogFullDataMatrix(bool[] matrix) => Enumerable.Range(0, 12).Select(r => Enumerable.Range(0, 12).Select(c => matrix[12 * r + c] ? 'x' : '.').Join("")).Join("\n");
+    private string LogFullDataMatrix(bool[] matrix) => Enumerable.Range(0, 12).Select(r => Enumerable.Range(0, 12).Select(c => matrix[12 * r + c] ? 'X' : '.').Join("")).Join("\n");
 }

@@ -29,9 +29,9 @@ public class EncodeFlip : EncodeMethod
             for (int j = 0; j < cap; j++)
             {
                 if (_even)
-                    converted[cap - 1 - i][j] = groups[i][cap - 1 - j];
+                    converted[cap - 1 - i][j] = groups[i][j];
                 else
-                    converted[i][cap - 1 - j] = groups[cap - 1 - i][j];
+                    converted[i][cap - 1 - j] = groups[i][j];
             }
 
         return converted.SelectMany(x => x.Select(y => grid[y])).ToArray();
