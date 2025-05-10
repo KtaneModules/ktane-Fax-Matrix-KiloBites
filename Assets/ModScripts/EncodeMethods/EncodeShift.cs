@@ -37,7 +37,7 @@ public class EncodeShift : EncodeMethod
 
         for (int i = 0; i < 10; i++)
             for (int j = 0; j < 10; j++)
-                converted[i][j] = _even ? groups[shifts[i]][j] : groups[i][shifts[j]];
+                converted[i][j] = _isRow ? groups[shifts[i]][j] : groups[i][shifts[j]];
 
         return converted.SelectMany(x => x.Select(y => grid[y])).ToArray();
     }
