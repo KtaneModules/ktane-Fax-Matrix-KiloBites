@@ -70,7 +70,7 @@ public class DataMatrixEncoder
 
         for (int i = 0; i < 6; i++)
         {
-            loggedDirections.Add($"From {hexPositions[currentPosition]} to {hexPositions[(int)convertedDirections[i]]}");
+            loggedDirections.Add($"From {hexPositions[currentPosition]} to {hexPositions[hexGrid[currentPosition][(int)convertedDirections[i]]]}");
             currentPosition = hexGrid[currentPosition][(int)convertedDirections[i]];
             trackedDirections.Add(currentPosition);
         }
@@ -179,15 +179,13 @@ public class DataMatrixEncoder
     {
         var full = new bool[100];
 
-        var converted = quadrants.SelectMany(x => x.Select(y => y)).ToArray();
-
         var quadrantIxes = Enumerable.Range(0, 4).Select(x => Enumerable.Range(0, 25).Select(y => 5 * (x % 2) + y % 5 + (50 * (x / 2) + 10 * (y / 5))).ToArray()).ToArray();
 
-        foreach (var quadrant in quadrantIxes)
-            for (int i = 0; i < quadrant.Length; i++)
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 25; j++)
             {
-                var ix = quadrant[i];
-                full[ix] = converted[i];
+                var ix = quadrantIxes[i][j];
+                full[ix] = quadrants[i][j];
             }
 
         return full;
