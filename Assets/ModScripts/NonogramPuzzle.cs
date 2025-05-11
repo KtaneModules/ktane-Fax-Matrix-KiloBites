@@ -10,7 +10,7 @@ public class NonogramPuzzle
 
     private NonogramGenerator _generator;
 
-    string _serialNumber;
+    private readonly string _serialNumber;
 
     public int[] GeneratedNumbers;
 
@@ -19,7 +19,7 @@ public class NonogramPuzzle
         _serialNumber = serialNumber;
     }
 
-    public bool[] GetFullClusters() => Reduce(false).Select(x => x == Color.black).ToArray();
+    private bool[] GetFullClusters() => Reduce(false).Select(x => x == Color.black).ToArray();
 
     public bool[] GetPuzzleClusters() => Reduce(true).Select(x => x == Color.black).ToArray();
 

@@ -1,15 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-public enum HexDirections
-{
-    Up,
-    Up_Right,
-    Down_Right,
-    Down,
-    Down_Left,
-    Up_Left
-}
+
 
 public class DataMatrixEncoder
 {
@@ -22,12 +14,31 @@ public class DataMatrixEncoder
         _entireDataMatrix = entireDataMatrix;
     }
 
+    enum HexDirection
+    {
+        Up,
+        Up_Right,
+        Down_Right,
+        Down,
+        Down_Left,
+        Up_Left
+    }
+
+    enum HexPosition
+    {
+        Top,
+        Top_Left,
+        Top_Right,
+        Center,
+        Bottom_Left,
+        Bottom_Right,
+        Bottom
+    }
+
     public List<List<string>> Logged = new List<List<string>>();
 
-    private static readonly string[] hexPositions = { "Top", "Top Left", "Top Right", "Center", "Bottom Left", "Bottom Right", "Bottom" };
 
-
-    private static readonly int[][] hexGrid =
+    private static readonly HexPosition[][] hexGrid = new[]
     {
         new[] { 6, 1, 2, 3, 1, 2 },
         new[] { 4, 0, 3, 4, 0, 5 },
@@ -36,30 +47,30 @@ public class DataMatrixEncoder
         new[] { 1, 3, 6, 1, 2, 6 },
         new[] { 2, 6, 1, 2, 6, 3 },
         new[] { 3, 5, 4, 0, 5, 4 }
-    };
+    }.Select(x => x.Select(y => (HexPosition)y).ToArray()).ToArray();
 
-    private int currentPosition = 3;
+    private HexPosition currentPosition = HexPosition.Center;
 
     public bool[] EncodeDataMatrix(string sn)
     {
         var alpha = "-ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        var convertedDirections = sn.Select(x => (char.IsLetter(x) ? alpha.IndexOf(x) : int.Parse(x.ToString())) % 6).Select(x => (HexDirections)x).ToArray();
+        var convertedDirections = sn.Select(x => (char.IsLetter(x) ? alpha.IndexOf(x) : int.Parse(x.ToString())) % 6).Select(x => (HexDirection)x).ToArray();
         var convertedBools = sn.Select(x => (char.IsLetter(x) ? alpha.IndexOf(x) : int.Parse(x.ToString())) % 2 == 0).ToArray();
 
         var encoded = _dataMatrix.ToArray();
         var encodedQuadrants = GenerateQuadrants(encoded);
 
         var loggedDirections = new List<string>();
-        var trackedDirections = new List<int>();
+        var trackedDirections = new List<HexPosition>();
 
         Logged.Add(new List<string> { "Full Data Matrix:", LogFullDataMatrix(_entireDataMatrix) });
         Logged.Add(new List<string> { "Before modifying grid:", LogEntireGrid(encoded) });
 
         for (int i = 0; i < 6; i++)
         {
-            loggedDirections.Add($"Going {convertedDirections[i].ToString().Replace('_', '-')} from {hexPositions[currentPosition]} to {hexPositions[hexGrid[currentPosition][(int)convertedDirections[i]]]}");
-            currentPosition = hexGrid[currentPosition][(int)convertedDirections[i]];
+            loggedDirections.Add($"Going {convertedDirections[i].ToString().Replace('_', '-')} from {currentPosition.ToString().Replace('_', '-')} to {hexGrid[(int)currentPosition][(int)convertedDirections[i]].ToString().Replace('_', '-')}");
+            currentPosition = hexGrid[(int)currentPosition][(int)convertedDirections[i]];
             trackedDirections.Add(currentPosition);
         }
 
@@ -84,33 +95,33 @@ public class DataMatrixEncoder
             if (ixA == ixB)
                 ixB = (ixB + 1) % 4;
 
-            list.Add($"{loggedDirections[i]}: {methods[trackedDirections[i]]?.Name ?? "Nothing"}");
+            list.Add($"{loggedDirections[i]}: {methods[(int)trackedDirections[i]].Name ?? "Nothing"}");
 
             switch (trackedDirections[i])
             {
-                case 0:
+                case HexPosition.Top:
                     list.Add($"Before flipping quadrant {ixA + 1}:");
                     list.Add(LogQuadrant(encodedQuadrants[ixA]));
-                    encodedQuadrants[ixA] = methods[trackedDirections[i]].EncodeGrid(encodedQuadrants[ixA]);
+                    encodedQuadrants[ixA] = methods[(int)trackedDirections[i]].EncodeGrid(encodedQuadrants[ixA]);
                     encoded = QuadrantsToFull(encodedQuadrants);
                     list.Add($"After flipping quadrant {ixA + 1}:");
                     list.Add(LogQuadrant(encodedQuadrants[ixA]));
                     break;
-                case 1:
+                case HexPosition.Top_Left:
                     list.Add("Before flipping grid:");
                     list.Add(LogEntireGrid(encoded));
-                    encoded = methods[trackedDirections[i]].EncodeGrid(encoded);
+                    encoded = methods[(int)trackedDirections[i]].EncodeGrid(encoded);
                     encodedQuadrants = GenerateQuadrants(encoded);
                     list.Add("After flipping grid:");
                     list.Add(LogEntireGrid(encoded));
                     break;
-                case 2:
+                case HexPosition.Top_Right:
                     list.Add($"Before swapping quadrant {ixA + 1} and quadrant {ixB + 1}:");
                     list.Add($"Quadrant {ixA + 1}:");
                     list.Add(LogQuadrant(encodedQuadrants[ixA]));
                     list.Add($"Quadrant {ixB + 1}:");
                     list.Add(LogQuadrant(encodedQuadrants[ixB]));
-                    encodedQuadrants = methods[trackedDirections[i]].EncodeQuadrants(encodedQuadrants);
+                    encodedQuadrants = methods[(int)trackedDirections[i]].EncodeQuadrants(encodedQuadrants);
                     encoded = QuadrantsToFull(encodedQuadrants);
                     list.Add($"After swapping quadrant {ixA + 1} and quadrant {ixB + 1}:");
                     list.Add($"Quadrant {ixA + 1}:");
@@ -118,29 +129,29 @@ public class DataMatrixEncoder
                     list.Add($"Quadrant {ixB + 1}:");
                     list.Add(LogQuadrant(encodedQuadrants[ixB]));
                     break;
-                case 3:
+                case HexPosition.Center:
                     list.Add("Do nothing to the grid/quadrant");
                     break;
-                case 4:
+                case HexPosition.Bottom_Left:
                     list.Add("Before rotating quadrants:");
                     list.Add(LogEntireGrid(encoded));
-                    encodedQuadrants = methods[trackedDirections[i]].EncodeQuadrants(encodedQuadrants);
+                    encodedQuadrants = methods[(int)trackedDirections[i]].EncodeQuadrants(encodedQuadrants);
                     encoded = QuadrantsToFull(encodedQuadrants);
                     list.Add("After rotating quadrants:");
                     list.Add(LogEntireGrid(encoded));
                     break;
-                case 5:
+                case HexPosition.Bottom_Right:
                     list.Add("Before shifting row:");
                     list.Add(LogEntireGrid(encoded));
-                    encoded = methods[trackedDirections[i]].EncodeGrid(encoded);
+                    encoded = methods[(int)trackedDirections[i]].EncodeGrid(encoded);
                     encodedQuadrants = GenerateQuadrants(encoded);
                     list.Add("After shifting row:");
                     list.Add(LogEntireGrid(encoded));
                     break;
-                case 6:
+                case HexPosition.Bottom:
                     list.Add("Before shifting column:");
                     list.Add(LogEntireGrid(encoded));
-                    encoded = methods[trackedDirections[i]].EncodeGrid(encoded);
+                    encoded = methods[(int)trackedDirections[i]].EncodeGrid(encoded);
                     encodedQuadrants = GenerateQuadrants(encoded);
                     list.Add("After shifting column:");
                     list.Add(LogEntireGrid(encoded));
