@@ -1,0 +1,10 @@
+{
+  "name": "faxMatrix-Editor",
+  "references": [
+    "faxMatrix"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": []
+}

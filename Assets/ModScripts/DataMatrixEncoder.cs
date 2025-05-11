@@ -1,18 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-/*public enum EncodeMethod
-{
-    FlipQuadrant,
-    FlipGrid,
-    Swap,
-    Nothing,
-    Rotate,
-    ShiftRow,
-    ShiftCol
-}
-*/
-
 public enum HexDirections
 {
     Up,
@@ -70,7 +58,7 @@ public class DataMatrixEncoder
 
         for (int i = 0; i < 6; i++)
         {
-            loggedDirections.Add($"From {hexPositions[currentPosition]} to {hexPositions[hexGrid[currentPosition][(int)convertedDirections[i]]]}");
+            loggedDirections.Add($"Going {convertedDirections[i].ToString().Replace('_', '-')} from {hexPositions[currentPosition]} to {hexPositions[hexGrid[currentPosition][(int)convertedDirections[i]]]}");
             currentPosition = hexGrid[currentPosition][(int)convertedDirections[i]];
             trackedDirections.Add(currentPosition);
         }
