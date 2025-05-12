@@ -192,6 +192,8 @@ public class FaxMatrixScript : MonoBehaviour {
 						button.GetComponentInChildren<TextMesh>().text = "Reset";
 						secondButtonRender.material = toggleables[1];
 						flagging = false;
+						flagged = Enumerable.Repeat(false, 100).ToArray();
+						UpdateMatrixGrid();
 						modeButtons[1].GetComponent<MeshRenderer>().material = toggleables[1];
 						modeButtons[1].GetComponentInChildren<TextMesh>().text = "Clear";
 						phase++;
@@ -268,7 +270,6 @@ public class FaxMatrixScript : MonoBehaviour {
 
 	void MatrixButtonPress(KMSelectable button)
 	{
-		button.AddInteractionPunch(0.4f);
 		Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, transform);
 
 		if (moduleSolved || !isActivated || transition != null)
@@ -278,13 +279,16 @@ public class FaxMatrixScript : MonoBehaviour {
 
 		if (flagging)
 		{
-			flagged[ix] = !flagged[ix];
-			inputtedGrid[ix] = false;
+			if (!inputtedGrid[ix])
+				flagged[ix] = !flagged[ix];
 		}
 		else
 		{
-			flagged[ix] = false;
-			inputtedGrid[ix] = !inputtedGrid[ix];
+			if (!flagged[ix])
+			{
+                flagged[ix] = false;
+                inputtedGrid[ix] = !inputtedGrid[ix];
+            }
 		}
 
 		UpdateMatrixGrid();
@@ -446,6 +450,12 @@ public class FaxMatrixScript : MonoBehaviour {
 
 			var coordinates = split.Skip(1).Select(x => Array.IndexOf(rows, x.Skip(1).Join("")) * 10 + columns.IndexOf(x[0])).ToArray();
 
+			if (("FLAG".ContainsIgnoreCase(split[0]) && coordinates.Any(x => inputtedGrid[x])) || ("FILL".ContainsIgnoreCase(split[0]) && coordinates.Any(x => flagged[x])))
+			{
+				yield return $"sendtochaterror You cannot override the following squares: {coordinates.Where(x => "FLAG".ContainsIgnoreCase(split[0]) ? inputtedGrid[x] : flagged[x]).Select(x => $"{columns[x % 10]}{(x / 10) + 1}").Join(", ")}. Unflag/unfill this in order to perform that instruction.";
+				yield break;
+			}
+
 			if (phase == 0)
                 if (("FLAG".ContainsIgnoreCase(split[0]) && !flagging) || ("FILL".ContainsIgnoreCase(split[0]) && flagging))
                 {
@@ -587,6 +597,14 @@ public class FaxMatrixScript : MonoBehaviour {
 				modeButtons[1].OnInteract();
 				yield return null;
 				modeButtons[1].OnInteractEnded();
+				yield return new WaitForSeconds(0.1f);
+			}
+
+			if (inputtedGrid.Count(x => x) > 0)
+			{
+				modeButtons[1].OnInteract();
+				yield return new WaitForSeconds(1);
+				modeButtons[1].OnHighlightEnded();
 				yield return new WaitForSeconds(0.1f);
 			}
 

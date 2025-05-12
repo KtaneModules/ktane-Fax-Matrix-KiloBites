@@ -19,10 +19,7 @@ public class EncodeRotate : EncodeMethod
     {
         var modified = quadrants.ToArray();
 
-        var rotated = new[] { 0, 1, 3, 2 };
-
-        for (int i = 0; i < 4; i++)
-            rotated[i] = (_even ? (rotated[i] - 1 + 4) : (rotated[i] + 1)) % 4;
+        var rotated = _even ? new[] { 1, 3, 0, 2 } : new[] { 2, 0, 3, 1 };
 
         return rotated.Select(x => modified[x]).ToArray();
     }

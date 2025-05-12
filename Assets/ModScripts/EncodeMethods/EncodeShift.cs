@@ -28,9 +28,9 @@ public class EncodeShift : EncodeMethod
         for (int i = 0; i < 10; i++)
         {
             if (_isRow)
-                shifts[i] = (_even ? (shifts[i] + 1) : (shifts[i] - 1 + 10)) % 10;
-            else
                 shifts[i] = (_even ? (shifts[i] - 1 + 10) : (shifts[i] + 1)) % 10;
+            else
+                shifts[i] = (_even ? (shifts[i] + 1) : (shifts[i] - 1 + 10)) % 10;
         }
 
         var converted = Enumerable.Range(0, 10).Select(_ => new int[10]).ToArray();
