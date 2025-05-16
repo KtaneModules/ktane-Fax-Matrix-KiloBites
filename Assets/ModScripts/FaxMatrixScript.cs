@@ -577,6 +577,8 @@ public class FaxMatrixScript : MonoBehaviour {
                 yield return new WaitForSeconds(0.25f);
             }
 			yield return new WaitForSeconds(0.5f);
+			yield return "solve";
+			yield return "strike";
 		}
     }
 
@@ -644,7 +646,10 @@ public class FaxMatrixScript : MonoBehaviour {
 		{
 			inputtedNumbers.Add(puzzle.GeneratedNumbers[i]);
 			mainDisplayText.text = inputtedNumbers.Join("");
-			Audio.PlaySoundAtTransform($"S_DTMF_0{puzzle.GeneratedNumbers[i]}", transform);
+
+			if (faxMatrixId == 1)
+                Audio.PlaySoundAtTransform($"S_DTMF_0{puzzle.GeneratedNumbers[i]}", transform);
+
             yield return new WaitForSeconds(0.25f);
 		}
 
