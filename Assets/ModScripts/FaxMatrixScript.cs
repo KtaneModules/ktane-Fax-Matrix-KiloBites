@@ -642,7 +642,7 @@ public class FaxMatrixScript : MonoBehaviour {
 			yield return new WaitForSeconds(0.25f);
 		}
 
-		for (int i = inputtedNumbers.Count - 1; i < puzzle.GeneratedNumbers.Length; i++)
+		for (int i = inputtedNumbers.Count; i < puzzle.GeneratedNumbers.Length; i++)
 		{
 			inputtedNumbers.Add(puzzle.GeneratedNumbers[i]);
 			mainDisplayText.text = inputtedNumbers.Join("");
