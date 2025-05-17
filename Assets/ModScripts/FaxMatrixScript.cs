@@ -207,7 +207,7 @@ public class FaxMatrixScript : MonoBehaviour {
 				}
 				else
 				{
-					inputtedGrid = solution;
+					inputtedGrid = solution.ToArray();
 					UpdateMatrixGrid();
 				}
 				break;
